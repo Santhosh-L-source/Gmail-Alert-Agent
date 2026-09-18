@@ -1,7 +1,8 @@
 services:
-  - type: worker
+  - type: web
     name: gmail-alert-agent
     runtime: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python -m src.main
     envVars:

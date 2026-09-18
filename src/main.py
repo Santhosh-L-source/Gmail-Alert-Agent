@@ -9,6 +9,8 @@ import sys
 import time
 import signal
 import logging
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
 # Configure UTF-8 encoding for standard streams on Windows
@@ -27,6 +29,29 @@ from src.gmail_trigger import GmailTrigger
 from src.ai_agent import AIAgent
 from src.condition import Condition
 from src.slack_sender import SlackSender
+
+# ─── Free Tier Web Health Server ─────────────────────────────────────────────
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"Gmail Alert Agent is running healthy!")
+
+    def log_message(self, format, *args):
+        return  # Silence HTTP access logs to keep console clean
+
+
+def start_health_server():
+    port = int(os.getenv("PORT", "8080"))
+    try:
+        server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        logger.info(f"🌐 Cloud Health server started on port {port} (Free Tier enabled)")
+    except Exception as e:
+        logger.warning(f"Could not bind port {port}: {e}")
 
 # ─── Logging Setup ───────────────────────────────────────────────────────────
 
@@ -146,6 +171,9 @@ def run_agent():
 
     config = load_config()
     interval = config["CHECK_INTERVAL_SECONDS"]
+
+    # Start health server for Render Free Web Service
+    start_health_server()
 
     logger.info("Configuration loaded successfully")
     logger.info(f"   Gmail: {config['GMAIL_EMAIL']}")
