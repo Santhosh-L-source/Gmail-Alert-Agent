@@ -1,0 +1,19 @@
+services:
+  - type: worker
+    name: gmail-alert-agent
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m src.main
+    envVars:
+      - key: GMAIL_EMAIL
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SLACK_WEBHOOK_URL
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: CHECK_INTERVAL_SECONDS
+        value: 60

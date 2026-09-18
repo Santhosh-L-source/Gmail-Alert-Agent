@@ -1,0 +1,22 @@
+# Environment variables (keep private!)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Logs
+*.log
+agent.log
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
