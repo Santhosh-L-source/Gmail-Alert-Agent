@@ -23,7 +23,11 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+except ImportError:
+    pass
 
 from src.gmail_trigger import GmailTrigger
 from src.ai_agent import AIAgent
@@ -88,8 +92,11 @@ except Exception:
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 def load_config() -> dict:
-    """Load and validate configuration from .env file."""
-    load_dotenv(override=True)
+    """Load and validate configuration from .env file or environment."""
+    try:
+        load_dotenv(override=True)
+    except Exception:
+        pass
 
     required_vars = [
         "GROQ_API_KEY",
